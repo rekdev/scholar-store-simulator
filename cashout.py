@@ -1,41 +1,35 @@
-def payment_module(producto, cantidad, products):
+def simulate_payment(selection_list):
     """
-    Calculates the total cost of selected products and simulates a payment with change.
+    Calculates the total price, asks the user to input the payment amount,
+    and displays the change or error if not enough money is provided.
 
     Args:
-        producto (list): List of selected product codes.
-        cantidad (list): List of quantities corresponding to each selected product.
-        products (dict): Dictionary of available products with prices.
+        selection_list (list): A list of dictionaries with product info and quantity.
 
     Returns:
-        float: The amount paid.
-        float: The change returned.
-        float: The total cost.
+        float: The total paid by the user (only if payment is successful).
     """
     total = 0
 
-    print("\n--- Payment Module ---")
-    for i in range(len(producto)):
-        code = producto[i]
-        qty = cantidad[i]
-        price = products[code]["price"]
-        subtotal = qty * price
+    print("\n--- Payment Summary ---")
+    for item in selection_list:
+        product = item["product"]
+        quantity = item["quantity"]
+        subtotal = product["price"] * quantity
         total += subtotal
-        print(f"{products[code]['name']} x{qty} = ${subtotal:.2f}")
+        print(f"{quantity} x {product['name']} = ${subtotal:.2f}")
 
     print(f"\nTotal to pay: ${total:.2f}")
 
     while True:
         try:
-            payment = float(input("Enter the amount paid: $"))
-            if payment < total:
-                print("Insufficient amount. Please enter a value equal or greater than the total.")
+            paid = float(input("Enter payment amount: $"))
+
+            if paid < total:
+                print("Insufficient payment. Please enter a valid amount.")
             else:
-                break
+                change = paid - total
+                print(f"Payment accepted. Change: ${change:.2f}")
+                return paid
         except ValueError:
-            print("Invalid input. Please enter a numeric value.")
-
-    change = payment - total
-    print(f"Change: ${change:.2f}")
-
-    return payment, change, total
+            print("Please enter a valid number.")
